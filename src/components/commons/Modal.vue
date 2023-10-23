@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-	(event: "update:modelValue", value: boolean): void
+	"update:modelValue": [value: boolean]
 }>()
 
 const el = ref<HTMLDialogElement>()

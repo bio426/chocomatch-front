@@ -10,8 +10,8 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-	(change: "update:modelValue", value: boolean): void
-	(change: "refresh"): void
+	"update:modelValue": [value: boolean]
+	refresh: []
 }>()
 
 watch(
