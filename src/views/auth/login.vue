@@ -1,28 +1,31 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { useField } from "vee-validate"
+import { useField, useForm } from "vee-validate"
+import { toTypedSchema } from "@vee-validate/yup"
 import { object, string } from "yup"
 
+import authService from "@/services/auth"
 import Overlay from "@/components/commons/Overlay.vue"
 
 const loading = ref(false)
 
-async function login() {
-	loading.value = true
-	setTimeout(() => {
-		loading.value = false
-	}, 1000)
-}
-
 // Form
-const { value: email, ...emailField } = useField(
-	"email",
-	string().email().required()
-)
-const { value: password, ...passwordField } = useField<string>(
-	"password",
-	string().required()
-)
+const { errors, defineInputBinds, handleSubmit } = useForm({
+	validationSchema: toTypedSchema(
+		object({
+			email: string().email().required(),
+			password: string().required(),
+		})
+	),
+})
+const email = defineInputBinds("email")
+const password = defineInputBinds("password")
+
+const login = handleSubmit(async (values) => {
+	loading.value = true
+	await authService.login({ email: values.email, password: values.password })
+	loading.value = false
+})
 </script>
 
 <template>
@@ -41,7 +44,7 @@ const { value: password, ...passwordField } = useField<string>(
 							class="input input-bordered w-full"
 							type="text"
 							placeholder="Type here"
-							v-model="email"
+							v-bind="email"
 						/>
 					</div>
 					<div class="form-control w-full mb-8">
